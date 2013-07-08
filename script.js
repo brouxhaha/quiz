@@ -13,30 +13,15 @@ var allQuestions = [
 		selectedAnswer,
 		nextQuestionButton = document.getElementsByClassName('next-question')[0];
 
-setQuestion(allQuestions, questionNumber);
-setAnswers();
 
-/*if(questionNumber < numberQuestions - 1){*/
-	nextQuestionButton.addEventListener('click', function(){
-		compareAnswers(selectedAnswer);
-		questionNumber++;
-		setQuestion();
-		setAnswers();
-		selectedAnswer.removeAttribute('checked');
-	});
-/*} else {
-	nextQuestionButton.removeEventListener('click', a);
-}*/
+setQuestion();
+nextQuestionButton.addEventListener('click', compareAnswers);
 
 function setQuestion(){
 	displayQuestion.innerHTML = allQuestions[questionNumber]['question'];
-}
-
-function setAnswers(){
 	numberAnswers = allQuestions[questionNumber]['choices'].length;
 	for(var i = 0; i < numberAnswers; i++){
 		displayAnswers[i].getElementsByTagName('label')[0].innerHTML = allQuestions[questionNumber]['choices'][i];
-		displayAnswers[i].getElementsByTagName('input')[0].removeAttribute('disabled');
 		displayAnswers[i].getElementsByTagName('input')[0].checked = false;
 	}
 }
@@ -51,10 +36,34 @@ function compareAnswers(){
 
 	if(correctAnswer == selectedAnswer.getAttribute('value')) {
 		userScore++;
-		console.log('user score: ' + userScore);
+	}
+	selectedAnswer.removeAttribute('checked');
+	setup();
+}
+
+function setup(){
+	questionNumber++;
+	if(questionNumber < numberQuestions - 1){
+		setQuestion();
+	} else {
+			nextQuestionButton.removeEventListener('click', setup);
+			nextQuestionButton.addEventListener('click', removeQuestion);
 	}
 }
 
-function displayScore(){
+function removeQuestion(){
+	var questionParent = displayQuestion.parentNode;
+	var answersList = questionParent.getElementsByTagName('ol')[0];
+	questionParent.removeChild(displayQuestion);
+	questionParent.removeChild(answersList);
+	questionParent.removeChild(nextQuestionButton);
 
+	displayScore(questionParent);
+}
+
+function displayScore(questionParent){
+	var scoreDisplayElement = document.createElement('h2'),
+			scoreDisplayText = document.createTextNode('You scored ' + userScore + ' out of ' + numberQuestions + '!');
+	questionParent.appendChild(scoreDisplayElement);
+	scoreDisplayElement.appendChild(scoreDisplayText);
 }
