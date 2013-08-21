@@ -21,7 +21,7 @@ var jsonObject = [
 		"correctAnswer": 3
 	}
 ];
-var quizInfo = JSON.parse(jsonObject);
+var quizInfo = JSON.parse("https://raw.github.com/brouxhaha/quiz/master/quizInfo.json");
 var	userScore = 0,
 		displayQuestion = document.getElementsByClassName('question')[0],
 		displayAnswers = document.getElementsByTagName('li'),
