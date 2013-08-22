@@ -6,17 +6,10 @@ var allQuestions = [
 ],
 		userScore = [],
 		theQuiz = document.getElementsByClassName('quiz')[0],
-		//displayQuestion = document.getElementsByClassName('question')[0],
-		displayAnswers = document.getElementsByTagName('li'),
-		questionNumber = 1,
-		numberQuestions = allQuestions.length,
-		numberAnswers = 0,
-		selectedAnswer,
-		nextQuestionButton = document.getElementsByClassName('next-question')[0],
-		previousQuestionButton = document.getElementsByClassName('previous-question')[0];
+		questionNumber = 0,
+		numberQuestions = allQuestions.length;
 
 createQuestion();
-console.log(theQuiz);
 
 function setQuestion(){
 	/*displayQuestion.innerHTML = allQuestions[questionNumber]['question'];
@@ -35,12 +28,16 @@ function createQuestion(){
 	theQuiz.appendChild(theQuestionElement);
 	theQuestionElement.appendChild(theQuestionText);
 
+	theQuestionElement.style.display = 'none';
+	$(theQuestionElement).fadeIn();
 	createAnswers();
 }
 
 function createAnswers(){
 	var orderedList = document.createElement('ol'),
 			answersArray = allQuestions[questionNumber]['choices'];
+
+	orderedList.style.display = 'none';
 
 	theQuiz.appendChild(orderedList);
 
@@ -63,7 +60,7 @@ function createAnswers(){
 
 		answerLabel.setAttribute('for', 'answer' + i);
 	}
-
+	$(orderedList).fadeIn();
 	createButtons();
 }
 
@@ -71,68 +68,75 @@ function createButtons() {
 	var nextButton = document.createElement('input'),
 			previousButton = document.createElement('input');
 
+	theQuiz.appendChild(nextButton);
+	theQuiz.appendChild(previousButton);
+
 	nextButton.type = 'submit';
 	nextButton.value = 'Next question';
 	nextButton.className = 'next-question';
 
 	previousButton.type = 'submit';
 	previousButton.value = 'Previous button';
-	previousButton.className = 'previous-button';
+	previousButton.className = 'previous-question';
 
 	displayButtons(nextButton, previousButton);
 }
 
 function displayButtons(next, prev) {
-	console.log(questionNumber);
-	theQuiz.appendChild(next);
-	theQuiz.appendChild(prev);
-	if(questionNumber === 1 || questionNumber === 4){
-		theQuiz.removeChild(prev);
+	if(questionNumber === 0){
+		prev.style.display = 'none';
 		prev.removeEventListener('click', determineQuestion);
 	} else {
-		theQuiz.appendChild(prev);
+		prev.style.display = '';
 		prev.addEventListener('click', determineQuestion);
 	}
-
-	if(questionNumber === 4){
-		theQuiz.removeChild(next);
-		next.removeEventListener('click', determineQuestion);
-	} else {
-		theQuiz.appendChild(next);
-		next.addEventListener('click', determineQuestion);
+	if(questionNumber === numberQuestions - 1){
+		next.value = 'Submit quiz';
 	}
+	next.addEventListener('click', determineQuestion);
 }
 
-function removeQuestionAndAnswers(){
-
+function determineQuestion(){
+	if(this.className === 'previous-question'){
+		questionNumber--;
+		userScore.pop();
+	} else {
+		validateAnswer();
+		questionNumber++;
+	}
+	removeQuestionAndAnswers();
 }
 
 function validateAnswer(){
+	var answers = theQuiz.getElementsByTagName('li'),
+			numberAnswers = answers.length;
 	for(var i = 0; i < numberAnswers; i++){
-		if(displayAnswers[i].getElementsByTagName('input')[0].checked){
-			compareAnswers();
-			return true;
+		if(answers[i].getElementsByTagName('input')[0].checked){
+			compareAnswers(answers, numberAnswers);
+			return false;
 		}
 	}
 	alert('Please choose an answer.');
 }
 
-function previousQuestion(){
+/*function previousQuestion(){
 	if(questionNumber === 0){
 		document.getElementsByClassName('quiz')[0].removeChild(previousQuestionButton);
-	} 
-		
+	}
+
 	questionNumber--;
 	userScore.pop();
 	console.log('previous: ' + questionNumber + '/' + numberQuestions + ' ' + userScore);
 	setQuestion();
-}
+}*/
 
-function compareAnswers(){
-	var correctAnswer = allQuestions[questionNumber]['correctAnswer'];
+function compareAnswers(answers, numberAnswers){
+	console.log("compareAnswers");
+	var correctAnswer = allQuestions[questionNumber]['correctAnswer'],
+			selectedAnswer;
 	for(var j = 0; j < numberAnswers; j++){
-		if(displayAnswers[j].getElementsByTagName('input')[0].checked){
-			selectedAnswer = displayAnswers[j].getElementsByTagName('input')[0];
+		if(answers[j].getElementsByTagName('input')[0].checked){
+			selectedAnswer = answers[j].getElementsByTagName('input')[0];
 		}
 	}
 
@@ -142,38 +146,40 @@ function compareAnswers(){
 		userScore.push(0);
 	}
 	selectedAnswer.removeAttribute('checked');
-	setup();
 }
 
-function setup(){
-	questionNumber++;
-	if(questionNumber === 1){
-		document.getElementsByClassName('quiz')[0].appendChild(previousQuestionButton);
-	}
-	console.log('next: ' + questionNumber + '/' + numberQuestions + ' ' + userScore);
-	if(questionNumber < numberQuestions){
-		setQuestion();
-	} else {
-		completeQuiz();
-	}
+function removeQuestionAndAnswers(){
+		var header = theQuiz.getElementsByTagName('h2')[0],
+				orderedList = theQuiz.getElementsByTagName('ol')[0],
+				nextButton = theQuiz.getElementsByClassName('next-question')[0],
+				previousButton = theQuiz.getElementsByClassName('previous-question')[0];
+
+		theQuiz.removeChild(nextButton);
+		theQuiz.removeChild(previousButton);
+
+		$(header).fadeOut(function(){
+			theQuiz.removeChild(header);
+		});
+
+		$(orderedList).fadeOut(function(){
+			theQuiz.removeChild(orderedList);
+			if(questionNumber === numberQuestions){
+			completeQuiz();
+		} else {
+			createQuestion();
+		}
+		})
 }
 
 function completeQuiz(){
-	var questionParent = displayQuestion.parentNode;
-	var answersList = questionParent.getElementsByTagName('ol')[0];
-	questionParent.removeChild(displayQuestion);
-	questionParent.removeChild(answersList);
-	questionParent.removeChild(nextQuestionButton);
-	questionParent.removeChild(previousQuestionButton);
-
-	displayScore(questionParent);
+	displayScore();
 }
 
-function displayScore(questionParent){
+function displayScore(){
 	var finalUserScore = calculateScore();
 	var scoreDisplayElement = document.createElement('h2'),
 			scoreDisplayText = document.createTextNode('You scored ' + finalUserScore + ' out of ' + numberQuestions + '!');
-	questionParent.appendChild(scoreDisplayElement);
+	theQuiz.appendChild(scoreDisplayElement);
 	scoreDisplayElement.appendChild(scoreDisplayText);
 }
 
