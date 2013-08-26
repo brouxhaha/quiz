@@ -9,16 +9,30 @@ var allQuestions = [
 		questionNumber = 0,
 		numberQuestions = allQuestions.length;
 
+setUpLoginSignup();
 createQuestion();
 
-function setQuestion(){
-	/*displayQuestion.innerHTML = allQuestions[questionNumber]['question'];
-	numberAnswers = allQuestions[questionNumber]['choices'].length;
-	for(var i = 0; i < numberAnswers; i++){
-		displayAnswers[i].getElementsByTagName('label')[0].innerHTML = allQuestions[questionNumber]['choices'][i];
-		displayAnswers[i].getElementsByTagName('input')[0].checked = false;
-	}*/
-	createQuestion();
+function setUpLoginSignup(){
+	var userForm = document.getElementsByClassName('user-form')[0],
+			signUpLink = document.getElementsByClassName('signup-show')[0],
+			loginLink = document.getElementsByClassName('login-show')[0],
+			userSubmitButton = document.getElementsByClassName('submit-user')[0];
+
+	console.log(userForm);
+	userForm.style.display = 'none';
+
+	loginLink.addEventListener('click', showForm);
+	//signUpLink.addEventListener('click', showForm(event));
+
+	function showForm(event){
+		event.preventDefault();
+		var loginOrSignup = this.className;
+		if(loginOrSignup === 'signup-show'){
+			userSubmitButton.value = 'Sign up';
+		}
+		userForm.style.display = '';
+	}
+
 }
 
 function createQuestion(){
