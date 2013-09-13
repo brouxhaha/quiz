@@ -9,10 +9,10 @@ var allQuestions = [
 		questionNumber = 0,
 		numberQuestions = allQuestions.length;
 
-/*setUpLoginSignup();*/
+setUpLoginSignup();
 createQuestion();
 
-/*function setUpLoginSignup(){
+function setUpLoginSignup(){
 	var userForm = document.getElementsByClassName('user-form')[0],
 			signUpLink = document.getElementsByClassName('signup-show')[0],
 			loginLink = document.getElementsByClassName('login-show')[0],
@@ -31,8 +31,12 @@ createQuestion();
 		var loginOrSignup = this.className;
 		if(loginOrSignup === 'signup-show'){
 			userSubmitButton.value = 'Sign up';
-		} else {
-			userSubmitButton.value = 'Log in';
+			signUpLink.setAttribute("class", "signup-show active");
+			loginLink.setAttribute("class", "login-show");
+		} else if(loginOrSignup === 'login-show') {
+			userSubmitButton.value = 'Login';
+			loginLink.setAttribute("class", "login-show active");
+			signUpLink.setAttribute("class", "signup-show");
 		}
 		userForm.style.display = '';
 
@@ -64,7 +68,7 @@ createQuestion();
 
 	}
 
-}*/
+}
 
 function createQuestion(){
 	var theQuestionElement = document.createElement('h2'),
