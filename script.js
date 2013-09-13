@@ -9,31 +9,62 @@ var allQuestions = [
 		questionNumber = 0,
 		numberQuestions = allQuestions.length;
 
-setUpLoginSignup();
+/*setUpLoginSignup();*/
 createQuestion();
 
-function setUpLoginSignup(){
+/*function setUpLoginSignup(){
 	var userForm = document.getElementsByClassName('user-form')[0],
 			signUpLink = document.getElementsByClassName('signup-show')[0],
 			loginLink = document.getElementsByClassName('login-show')[0],
-			userSubmitButton = document.getElementsByClassName('submit-user')[0];
+			userSubmitButton = document.getElementsByClassName('submit-user')[0],
+			userName = '',
+			password = '';
 
 	console.log(userForm);
 	userForm.style.display = 'none';
 
 	loginLink.addEventListener('click', showForm);
-	//signUpLink.addEventListener('click', showForm(event));
+	signUpLink.addEventListener('click', showForm);
 
 	function showForm(event){
 		event.preventDefault();
 		var loginOrSignup = this.className;
 		if(loginOrSignup === 'signup-show'){
 			userSubmitButton.value = 'Sign up';
+		} else {
+			userSubmitButton.value = 'Log in';
 		}
 		userForm.style.display = '';
+
+		userSubmitButton.addEventListener('click', addUser);
 	}
 
-}
+	function addUser(){
+		userName = userForm.getElementsByClassName('user-name')[0].value;
+		password = userForm.getElementsByClassName('password')[0].value;
+		
+		if(userSubmitButton.value === 'Sign up'){
+			localStorage.setItem('userName', userName);
+			localStorage.setItem('password', password);
+		} else {
+			checkLoginCredentials(userName, password);
+		}
+
+		console.log(userName);
+		console.log(password);
+	}
+
+	function checkLoginCredentials(u, p){
+		var storedUserName = localStorage.userName;
+		var storedPassword = localStorage.password;
+	}
+
+
+	function displayWelcomeMessage(){
+
+	}
+
+}*/
 
 function createQuestion(){
 	var theQuestionElement = document.createElement('h2'),
@@ -49,7 +80,8 @@ function createQuestion(){
 
 function createAnswers(){
 	var orderedList = document.createElement('ol'),
-			answersArray = allQuestions[questionNumber]['choices'];
+			answersArray = allQuestions[questionNumber]['choices'],
+			selectedAnswer = allQuestions[questionNumber]['selectedAnswer'];
 
 	orderedList.style.display = 'none';
 
@@ -72,8 +104,14 @@ function createAnswers(){
 		answerInput.value = i;
 		answerInput.id = 'answer' + i;
 
-		answerLabel.setAttribute('for', 'answer' + i);
+		if(selectedAnswer == i){
+			answerInput.setAttribute('checked', 'checked');
+			answerInput.checked = true;
+		}
+
+		answerLabel.setAttribute('for', 'answer' + i);		
 	}
+
 	$(orderedList).fadeIn();
 	createButtons();
 }
@@ -90,7 +128,7 @@ function createButtons() {
 	nextButton.className = 'next-question';
 
 	previousButton.type = 'submit';
-	previousButton.value = 'Previous button';
+	previousButton.value = 'Previous question';
 	previousButton.className = 'previous-question';
 
 	displayButtons(nextButton, previousButton);
@@ -151,6 +189,8 @@ function compareAnswers(answers, numberAnswers){
 	for(var j = 0; j < numberAnswers; j++){
 		if(answers[j].getElementsByTagName('input')[0].checked){
 			selectedAnswer = answers[j].getElementsByTagName('input')[0];
+			allQuestions[questionNumber]['selectedAnswer'] = selectedAnswer.getAttribute('value');
+			console.log(allQuestions[questionNumber]['selectedAnswer']);
 		}
 	}
 
@@ -178,11 +218,11 @@ function removeQuestionAndAnswers(){
 		$(orderedList).fadeOut(function(){
 			theQuiz.removeChild(orderedList);
 			if(questionNumber === numberQuestions){
-			completeQuiz();
-		} else {
-			createQuestion();
-		}
-		})
+				completeQuiz();
+			} else {
+				createQuestion();
+			}
+		});
 }
 
 function completeQuiz(){
