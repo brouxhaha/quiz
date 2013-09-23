@@ -9,12 +9,15 @@
 	<header class='page-header'>
 		<h1> It's quiz time sucker!</h1>
 		<div class="login-signup">
-			<a href="#" class="login-show">Login</a> | <a href="#" class="signup-show">Sign up</a>
+			<div class="links">
+				<a href="#" class="login-show">Login</a> | <a href="#" class="signup-show">Sign up</a>
+			</div>
 			<div class="user-form">
 				<form>
 					<label for="user-name">user name:</label> <input type="text" class="user-name" id="user-name"><br>
 					<label for="password">password:</label> <input type="text" class="password" id="password"><br>
-					<input type="submit" value="Login" class="submit-user">
+					<p class="login-error hidden">User name and/or password are incorrect.</p>
+					<input type="button" value="Login" class="submit-user">
 				</form>
 			</div>
 		</div>

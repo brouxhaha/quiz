@@ -237,3 +237,10 @@ div:after, section:after, ul:after, header:after {
     margin-top: 5px; }
     .login-signup input:first-child {
       margin: 0; }
+
+.login-error {
+  color: red;
+  font-size: 8px; }
+
+.hidden {
+  display: none; }

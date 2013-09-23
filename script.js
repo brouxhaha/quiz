@@ -20,7 +20,7 @@ function setUpLoginSignup(){
 			userName = '',
 			password = '';
 
-	console.log(userForm);
+	console.log(userSubmitButton);
 	userForm.style.display = 'none';
 
 	loginLink.addEventListener('click', showForm);
@@ -29,6 +29,7 @@ function setUpLoginSignup(){
 	function showForm(event){
 		event.preventDefault();
 		var loginOrSignup = this.className;
+
 		if(loginOrSignup === 'signup-show'){
 			userSubmitButton.value = 'Sign up';
 			signUpLink.setAttribute("class", "signup-show active");
@@ -40,13 +41,18 @@ function setUpLoginSignup(){
 		}
 		userForm.style.display = '';
 
-		userSubmitButton.addEventListener('click', addUser);
+		if(userSubmitButton.value === 'Sign up'){
+			userSubmitButton.addEventListener('click', addUser);
+		} else {
+			userSubmitButton.addEventListener('click', checkLoginCredentials)
+		}
+
 	}
 
 	function addUser(){
 		userName = userForm.getElementsByClassName('user-name')[0].value;
 		password = userForm.getElementsByClassName('password')[0].value;
-		
+
 		if(userSubmitButton.value === 'Sign up'){
 			localStorage.setItem('userName', userName);
 			localStorage.setItem('password', password);
@@ -54,18 +60,36 @@ function setUpLoginSignup(){
 			checkLoginCredentials(userName, password);
 		}
 
-		console.log(userName);
-		console.log(password);
+		console.log(localStorage.getItem('userName'));
+		console.log(localStorage.getItem('password'));
+		displayWelcomeMessage();
 	}
 
 	function checkLoginCredentials(u, p){
 		var storedUserName = localStorage.userName;
 		var storedPassword = localStorage.password;
+
+		if(u === storedUserName && p === storedPassword){
+			displayWelcomeMessage();
+		} else {
+			loginError.class = 'login-error';
+		}
 	}
 
 
 	function displayWelcomeMessage(){
+		var theWelcomeElement = document.createElement('h3'),
+				theWelcomeText = document.createTextNode('Welcome, ' + userName),
+				loginSignupDiv = document.getElementsByClassName('login-signup')[0],
+				loginSignupLinks = document.getElementsByClassName('links')[0];
 
+		theWelcomeElement.className = 'welcome';
+
+		loginSignupDiv.removeChild(loginSignupLinks);
+		loginSignupDiv.removeChild(userForm);
+
+		theWelcomeElement.appendChild(theWelcomeText);
+		loginSignupDiv.appendChild(theWelcomeElement);
 	}
 
 }
@@ -113,7 +137,7 @@ function createAnswers(){
 			answerInput.checked = true;
 		}
 
-		answerLabel.setAttribute('for', 'answer' + i);		
+		answerLabel.setAttribute('for', 'answer' + i);
 	}
 
 	$(orderedList).fadeIn();
