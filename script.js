@@ -50,8 +50,8 @@ function setUpLoginSignup(){
 	}
 
 	function addUser(){
-		userName = userForm.getElementsByClassName('user-name')[0].value;
-		password = userForm.getElementsByClassName('password')[0].value;
+		var userName = userForm.getElementsByClassName('user-name')[0].value;
+		var password = userForm.getElementsByClassName('password')[0].value;
 
 		if(userSubmitButton.value === 'Sign up'){
 			localStorage.setItem('userName', userName);
@@ -62,24 +62,28 @@ function setUpLoginSignup(){
 
 		console.log(localStorage.getItem('userName'));
 		console.log(localStorage.getItem('password'));
-		displayWelcomeMessage();
+		displayWelcomeMessage(userName);
 	}
 
-	function checkLoginCredentials(u, p){
-		var storedUserName = localStorage.userName;
-		var storedPassword = localStorage.password;
+	function checkLoginCredentials(){
+		var storedUserName = localStorage.userName,
+				storedPassword = localStorage.password,
+				userName = userForm.getElementsByClassName('user-name')[0].value,
+				password = userForm.getElementsByClassName('password')[0].value,
+				loginError = userForm.getElementsByClassName('login-error')[0];
 
-		if(u === storedUserName && p === storedPassword){
-			displayWelcomeMessage();
+		console.log(loginError);
+		if(userName === storedUserName && password === storedPassword){
+			displayWelcomeMessage(userName);
 		} else {
-			loginError.class = 'login-error';
+			loginError.className = 'login-error';
 		}
 	}
 
 
-	function displayWelcomeMessage(){
+	function displayWelcomeMessage(uN){
 		var theWelcomeElement = document.createElement('h3'),
-				theWelcomeText = document.createTextNode('Welcome, ' + userName),
+				theWelcomeText = document.createTextNode('Welcome, ' + uN),
 				loginSignupDiv = document.getElementsByClassName('login-signup')[0],
 				loginSignupLinks = document.getElementsByClassName('links')[0];
 
