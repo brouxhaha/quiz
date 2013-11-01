@@ -56,6 +56,7 @@ function setUpLoginSignup(){
 		if(userSubmitButton.value === 'Sign up'){
 			localStorage.setItem('userName', userName);
 			localStorage.setItem('password', password);
+			setCookie(userName, password);
 		} else {
 			checkLoginCredentials(userName, password);
 		}
@@ -95,6 +96,41 @@ function setUpLoginSignup(){
 		theWelcomeElement.appendChild(theWelcomeText);
 		loginSignupDiv.appendChild(theWelcomeElement);
 	}
+
+	var CookieUtil = { //p. 772
+
+		get: function(name){
+			var cookieName = encodeURIComponent(name) + '=', 
+					cookieStart = document.cookie.indexOf(cookieName),
+					cookieValue = null;
+
+			if(cookieStart > -1){
+				var cookieEnd = document.cookie.indexOf(';', cookieStart);
+				if(cookieEnd == -1){
+					cookieEnd = document.cookie.length;
+				}
+				cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + cookieName.length, cookieEnd));
+			}
+		},
+
+		set: function(name, value, username, password){
+			var cookieText = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+
+			if(username){
+				cookieText += '; username=' + username;
+			}
+
+			if(username){
+				cookieText += '; password=' + password;
+			}
+
+			document.cookie = cookieText
+		},
+
+		unset: function(name, username, password){
+			this.set(name, **, username, password);
+		}
+	};
 
 }
 
