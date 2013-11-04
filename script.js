@@ -4,6 +4,48 @@ var allQuestions = [
 	{question: 'Who was the third president of the USA?', choices: ['Abraham Lincoln', 'George Washington', 'Thomas Jefferson', 'George Jefferson'], correctAnswer: 2},
 	{question: 'Who was the main character of <i>The Jeffersons</i>?', choices: ['Abraham Lincoln', 'George Washington', 'Thomas Jefferson', 'George Jefferson'], correctAnswer: 3}
 ],
+		CookieUtil = { //p. 772
+
+			get: function(name){
+				var cookieName = encodeURIComponent(name) + '=',
+						cookieStart = document.cookie.indexOf(cookieName),
+						cookieValue = null;
+
+				if(cookieStart > -1){
+					var cookieEnd = document.cookie.indexOf(';', cookieStart);
+					if(cookieEnd == -1){
+						cookieEnd = document.cookie.length;
+					}
+					cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + cookieName.length, cookieEnd));
+				}
+			},
+
+			set: function(name, value, expires, path, domain, secure){
+				var cookieText = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+
+				if(expires instanceof Date){
+					cookieText += '; expires=' + expires.toGMTString();
+				}
+
+				if(path){
+					cookieText += '; path=' + path;
+				}
+
+				if(domain){
+					cookieText += '; domain=' + domain;
+				}
+
+				if(secure){
+					cookieText += '; secure';
+				}
+
+				document.cookie = cookieText
+			},
+
+			unset: function(name, value){
+				this.set(name, "", new Date(0), path, domain, secure);
+			}
+		},
 		userScore = [],
 		theQuiz = document.getElementsByClassName('quiz')[0],
 		questionNumber = 0,
@@ -20,7 +62,7 @@ function setUpLoginSignup(){
 			userName = '',
 			password = '';
 
-	console.log(userSubmitButton);
+	//console.log(userSubmitButton);
 	userForm.style.display = 'none';
 
 	loginLink.addEventListener('click', showForm);
@@ -56,13 +98,12 @@ function setUpLoginSignup(){
 		if(userSubmitButton.value === 'Sign up'){
 			localStorage.setItem('userName', userName);
 			localStorage.setItem('password', password);
-			setCookie(userName, password);
 		} else {
 			checkLoginCredentials(userName, password);
 		}
 
-		console.log(localStorage.getItem('userName'));
-		console.log(localStorage.getItem('password'));
+		//console.log(localStorage.getItem('userName'));
+		//console.log(localStorage.getItem('password'));
 		displayWelcomeMessage(userName);
 	}
 
@@ -73,9 +114,10 @@ function setUpLoginSignup(){
 				password = userForm.getElementsByClassName('password')[0].value,
 				loginError = userForm.getElementsByClassName('login-error')[0];
 
-		console.log(loginError);
+		//console.log(loginError);
 		if(userName === storedUserName && password === storedPassword){
 			displayWelcomeMessage(userName);
+			CookieUtil.set('name', userName);
 		} else {
 			loginError.className = 'login-error';
 		}
@@ -96,41 +138,6 @@ function setUpLoginSignup(){
 		theWelcomeElement.appendChild(theWelcomeText);
 		loginSignupDiv.appendChild(theWelcomeElement);
 	}
-
-	var CookieUtil = { //p. 772
-
-		get: function(name){
-			var cookieName = encodeURIComponent(name) + '=', 
-					cookieStart = document.cookie.indexOf(cookieName),
-					cookieValue = null;
-
-			if(cookieStart > -1){
-				var cookieEnd = document.cookie.indexOf(';', cookieStart);
-				if(cookieEnd == -1){
-					cookieEnd = document.cookie.length;
-				}
-				cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + cookieName.length, cookieEnd));
-			}
-		},
-
-		set: function(name, value, username, password){
-			var cookieText = encodeURIComponent(name) + '=' + encodeURIComponent(value);
-
-			if(username){
-				cookieText += '; username=' + username;
-			}
-
-			if(username){
-				cookieText += '; password=' + password;
-			}
-
-			document.cookie = cookieText
-		},
-
-		unset: function(name, username, password){
-			this.set(name, **, username, password);
-		}
-	};
 
 }
 
