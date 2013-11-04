@@ -18,6 +18,8 @@ var allQuestions = [
 					}
 					cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + cookieName.length, cookieEnd));
 				}
+
+				return cookieValue;
 			},
 
 			set: function(name, value, expires, path, domain, secure){
@@ -39,7 +41,7 @@ var allQuestions = [
 					cookieText += '; secure';
 				}
 
-				document.cookie = cookieText
+				document.cookie = cookieText;
 			},
 
 			unset: function(name, value){
@@ -49,10 +51,19 @@ var allQuestions = [
 		userScore = [],
 		theQuiz = document.getElementsByClassName('quiz')[0],
 		questionNumber = 0,
-		numberQuestions = allQuestions.length;
+		numberQuestions = allQuestions.length,
+		cookieValue = CookieUtil.get('name');
 
-setUpLoginSignup();
+if(cookieValue === null){
+	console.log(cookieValue + " is null")
+	setUpLoginSignup();
+} else {
+	console.log(cookieValue + " not null")
+	displayWelcomeMessage(cookieValue);
+}
+
 createQuestion();
+
 
 function setUpLoginSignup(){
 	var userForm = document.getElementsByClassName('user-form')[0],
@@ -98,6 +109,9 @@ function setUpLoginSignup(){
 		if(userSubmitButton.value === 'Sign up'){
 			localStorage.setItem('userName', userName);
 			localStorage.setItem('password', password);
+			CookieUtil.set('name', userName);
+			console.log(userName);
+			console.log(CookieUtil.get('name') + 'addUser function');
 		} else {
 			checkLoginCredentials(userName, password);
 		}
@@ -118,27 +132,27 @@ function setUpLoginSignup(){
 		if(userName === storedUserName && password === storedPassword){
 			displayWelcomeMessage(userName);
 			CookieUtil.set('name', userName);
+			console.log(CookieUtil.get('name'));
 		} else {
 			loginError.className = 'login-error';
 		}
 	}
+}
 
+function displayWelcomeMessage(uN){
+	var theWelcomeElement = document.createElement('h3'),
+			theWelcomeText = document.createTextNode('Welcome, ' + uN),
+			loginSignupDiv = document.getElementsByClassName('login-signup')[0],
+			loginSignupLinks = document.getElementsByClassName('links')[0],
+			userForm = document.getElementsByClassName('user-form')[0];
 
-	function displayWelcomeMessage(uN){
-		var theWelcomeElement = document.createElement('h3'),
-				theWelcomeText = document.createTextNode('Welcome, ' + uN),
-				loginSignupDiv = document.getElementsByClassName('login-signup')[0],
-				loginSignupLinks = document.getElementsByClassName('links')[0];
+	theWelcomeElement.className = 'welcome';
 
-		theWelcomeElement.className = 'welcome';
+	loginSignupDiv.removeChild(loginSignupLinks);
+	loginSignupDiv.removeChild(userForm);
 
-		loginSignupDiv.removeChild(loginSignupLinks);
-		loginSignupDiv.removeChild(userForm);
-
-		theWelcomeElement.appendChild(theWelcomeText);
-		loginSignupDiv.appendChild(theWelcomeElement);
-	}
-
+	theWelcomeElement.appendChild(theWelcomeText);
+	loginSignupDiv.appendChild(theWelcomeElement);
 }
 
 function createQuestion(){
