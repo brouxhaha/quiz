@@ -241,11 +241,13 @@ function determineQuestion(){
 	if(this.className === 'previous-question'){
 		questionNumber--;
 		userScore.pop();
+		removeQuestionAndAnswers();
 	} else {
-		validateAnswer();
-		questionNumber++;
+		if(validateAnswer() === true) {
+			questionNumber++;
+			removeQuestionAndAnswers();
+		}
 	}
-	removeQuestionAndAnswers();
 }
 
 function validateAnswer(){
@@ -253,11 +255,13 @@ function validateAnswer(){
 			numberAnswers = answers.length;
 	for(var i = 0; i < numberAnswers; i++){
 		if(answers[i].getElementsByTagName('input')[0].checked){
+			console.log('answer selected');
 			compareAnswers(answers, numberAnswers);
-			return false;
+			return true;
 		}
 	}
 	alert('Please choose an answer.');
+	return false;
 }
 
 /*function previousQuestion(){
