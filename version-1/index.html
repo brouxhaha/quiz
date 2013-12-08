@@ -7,7 +7,7 @@
 </head>
 <body>
 	<header class='page-header'>
-
+		<h1> It's quiz time sucker!</h1>
 		<div class="login-signup">
 			<div class="links">
 				<a href="#" class="login-show">Login</a> | <a href="#" class="signup-show">Sign up</a>
@@ -22,34 +22,13 @@
 			</div>
 		</div>
 	</header>
+	<section class='quiz'>
 
-	<div id="quiz">
-		<script id="quiz-template" type="text/x-handlebars-template">
-			{{#each this}}
-			<section id="question{{@index}}" class="question hidden">
-					<h1>Question {{id}}</h1>
-					<h2>{{question}}</h2>
-					<ul>
-						{{#each choices}}
-						<li><input type="radio" name="question{{../id}}" value="{{this}}">{{this}}</li>
-						{{/each}}
-					</ul>
 
-			</section>
-			{{/each}}
-		</script>
-	</div>
-
-	<section class="buttons">
-		<input type="submit" value="Previous Question" class="prev-question" id="questionPrev">
-		<input type="submit" value="Next Question" class="next-question" id="questionNext">
-		<input type="submit" value="Submit Quiz" class="quiz-submit" id="quizSubmit">
 	</section>
-
 	<footer>
 
 	</footer>
-	<script src="scripts/handlebars-v1.1.2.js"></script>
 	<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
 	<script src='script.js'></script>
 </body>
