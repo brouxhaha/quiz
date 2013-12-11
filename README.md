@@ -2,8 +2,7 @@ quiz
 ====
 
 ###current version
--added handlebarsjs templating
-
+-added handlebarsjs templating\n
 -object-oriented approach
 
 
