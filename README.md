@@ -3,6 +3,7 @@ quiz
 
 ###current version
 -added handlebarsjs templating
+
 -object-oriented approach
 
 
