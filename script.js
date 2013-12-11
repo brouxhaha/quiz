@@ -11,7 +11,7 @@
 				userName: "",
 				userPass: "",
 				userScore: [],
-				cookieValue: CookieUtil.get[0],
+				//cookieValue: CookieUtil.get[0],
 				numberQuestions: this.allQuestions.length,
 				questionNumber: 0
 			},
@@ -63,56 +63,106 @@
 	Quiz.prototype = {
 
 		init: function(){
-			var self = this;
 
 			this.createQuestions();
-			this.attachQuestionsTemplate();
-			this.questionToggle();
+			this.bindHandlers();
 
 		},
 
+		//create array of question objects
 		createQuestions: function(){
 			this.questions = this.allQuestions.map(function(item, index, q){
 				return new Question(item.id, item.question, item.choices, item.answer);
 			});
+
+			this.attachQuestionsTemplate();
 		},
 
+		//attach the questions to the handlebars template
 		attachQuestionsTemplate: function(){
 			var template = Handlebars.compile(this.quizElements.questionsTemplate);
 			this.quizElements.questionsContainer.append(template(this.questions));
+
+			this.questionToggle();
+			this.submitToggle();
 		},
 
+		//toggles the display of the current question
 		questionToggle: function(){
 			$('#question' + this.settings.questionNumber).toggle();
 		},
 
-		/*displayPrevButton: function(){
-
+		//toggles the previous button's enabled property
+		prevToggle: function(){
+			if(this.settings.currentQuestion > 0){
+				this.quizElements.questionPrev.enabled = true;
+			} else {
+				this.quizElements.questionPrev.disabled = "disabled";
+			}
 		},
 
-		displayNextButton: function(){
-
+		//toggles the next question and submit quiz buttons
+		submitToggle: function(){
+			if(this.settings.currentQuestion === this.questions.length - 1){
+				this.quizElements.quizSubmit.show();
+				this.quizElements.questionNext.hide();
+			} else {
+				this.quizElements.quizSubmit.hide();
+				this.quizElements.questionNext.show();
+			}
 		},
 
+		//hides current question and displays next question
 		nextQuestion: function(){
-
+			this.questionToggle();
+			this.settings.currentQuestion++;
+			this.questionToggle();
+			console.log("next question");
 		},
 
+		//hides current question and displays previous question
 		previousQuestion: function(){
-
+			this.questionToggle();
+			this.settings.currentQuestion--;
+			this.questionToggle();
 		},
 
+		//ensure the user has selected an answer
 		validateAnswer: function(){
-
+			if(!this.questions[this.settings.questionNumber].getUserAnswer()){
+				alert("You must choose an answer");
+				event.stopImmediatePropagation();
+			}
 		},
 
+		//store the selected answer
+		storeAnswer: function(selected){
+			this.questions[this.settings.questionNumber].setUserAnswer(selected.val());
+		},
+
+
+		// handles the question to be displayed by which button has been pressed
 		changeQuestion: function(){
 
 		},
 
 		bindHandlers: function(){
+			var self = this;
 
-		}*/
+			this.quizElements.questionPrev.on('click', function(){
+				self.validateAnswer();
+			});
+			this.quizElements.questionNext.on('click', function(){
+				self.validateAnswer();
+			});
+			this.quizElements.quizSubmit.on('click', function(){
+				self.validateAnswer()
+			});
+
+			$('input:radio').on('change', function(event){
+				self.storeAnswer($(this));
+			});
+		}
 
 	};
 
