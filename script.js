@@ -94,17 +94,22 @@
 
 		//toggles the previous button's enabled property
 		prevToggle: function(){
-			if(this.settings.currentQuestion > 0){
-				this.quizElements.questionPrev.enabled = true;
+			if(this.settings.questionNumber > 0){
+				this.quizElements.questionPrev.removeAttr('disabled');
+			} else if(this.settings.questionNumber === this.questions.length){
+				this.quizElements.questionPrev.hide();
 			} else {
-				this.quizElements.questionPrev.disabled = "disabled";
+				this.quizElements.questionPrev.attr('disabled','disabled');
 			}
 		},
 
 		//toggles the next question and submit quiz buttons
 		submitToggle: function(){
-			if(this.settings.currentQuestion === this.questions.length - 1){
+			if(this.settings.questionNumber === this.questions.length - 1){
 				this.quizElements.quizSubmit.show();
+				this.quizElements.questionNext.hide();
+			} else if(this.settings.questionNumber === this.questions.length) {
+				this.quizElements.quizSubmit.hide();
 				this.quizElements.questionNext.hide();
 			} else {
 				this.quizElements.quizSubmit.hide();
@@ -115,23 +120,25 @@
 		//hides current question and displays next question
 		nextQuestion: function(){
 			this.questionToggle();
-			this.settings.currentQuestion++;
+			this.settings.questionNumber++;
 			this.questionToggle();
-			console.log("next question");
+			this.prevToggle()
 		},
 
 		//hides current question and displays previous question
 		previousQuestion: function(){
 			this.questionToggle();
-			this.settings.currentQuestion--;
+			this.settings.questionNumber--;
 			this.questionToggle();
 		},
 
 		//ensure the user has selected an answer
-		validateAnswer: function(){
+		validateAnswer: function(button){
 			if(!this.questions[this.settings.questionNumber].getUserAnswer()){
 				alert("You must choose an answer");
 				event.stopImmediatePropagation();
+			} else {
+				this.changeQuestion(button)
 			}
 		},
 
@@ -142,21 +149,29 @@
 
 
 		// handles the question to be displayed by which button has been pressed
-		changeQuestion: function(){
-
+		changeQuestion: function(button){
+			if(button.val() === 'Previous Question'){
+				this.previousQuestion();
+			} else if (button.val() === 'Submit Quiz'){
+				//do something
+			} else {
+				this.nextQuestion();
+			}
+			this.submitToggle();
+			this.prevToggle()
 		},
 
 		bindHandlers: function(){
 			var self = this;
 
 			this.quizElements.questionPrev.on('click', function(){
-				self.validateAnswer();
+				self.changeQuestion($(this));
 			});
 			this.quizElements.questionNext.on('click', function(){
-				self.validateAnswer();
+				self.validateAnswer($(this));
 			});
 			this.quizElements.quizSubmit.on('click', function(){
-				self.validateAnswer()
+				self.changeQuestion($(this))
 			});
 
 			$('input:radio').on('change', function(event){
