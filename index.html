@@ -29,21 +29,27 @@
 			<section id="question{{@index}}" class="question hidden">
 					<h1>Question {{id}}</h1>
 					<h2>{{question}}</h2>
-					<ul>
+					<ol class="choices">
 						{{#each choices}}
-						<li><input type="radio" name="question{{../id}}" value="{{this}}">{{this}}</li>
+						<li class="choice"><input type="radio" name="question{{../id}}" value="{{this}}"> {{this}}</li>
 						{{/each}}
-					</ul>
+					</ol>
 
 			</section>
 			{{/each}}
 		</script>
 	</div>
 
+	<div class="results">
+		<script id="results-template" type="text/x-handlebars-template">
+			<h1>Congratulations, you scored {{userScore}} out of {{numberQuestions}}</h1>
+		</script>
+	</div>
+
 	<section class="buttons">
-		<input type="submit" value="Previous Question" class="prev-question" id="questionPrev" disabled="disabled">
-		<input type="submit" value="Next Question" class="next-question" id="questionNext">
-		<input type="submit" value="Submit Quiz" class="quiz-submit" id="quizSubmit">
+		<input type="submit" value="Next" class="next-question button" id="questionNext">
+		<input type="submit" value="Submit Quiz" class="quiz-submit button" id="quizSubmit">
+		<input type="submit" value="Back" class="prev-question button" id="questionPrev" disabled="disabled">
 	</section>
 
 	<footer>

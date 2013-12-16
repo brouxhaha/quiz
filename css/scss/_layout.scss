@@ -84,3 +84,63 @@ div, section, ul, header {
 	display: none;
 }
 
+/* QUIZ STYLES */
+
+#quiz {
+	position: relative;
+	max-width: 600px;
+	min-height: 200px;
+}
+
+h1 {
+	font-size: 18px;
+	font-weight: normal;
+	margin: 0 0 -4px 0;
+	/*background: black;
+	color: white;
+	padding: 5px;
+	display: inline-block;
+	margin: 0;*/
+}
+
+h2 {
+	font-size: 18px;
+	background: black;
+	color: white;
+	padding: 5px;
+	display: inline-block;
+	margin: 0;
+}
+
+.question {
+	position: absolute;
+}
+
+.choices {
+	list-style: lower-alpha;
+}
+
+.choice {
+	margin-bottom: 5px;
+}
+
+.buttons {
+	max-width: 600px;
+}
+
+.button {
+	background: orange;
+	border: 1px solid #333;
+	clear: both;
+	display: block;
+	margin-bottom: 15px;
+}
+
+.button:disabled {
+	background: #ccc;
+	border: 1px solid #999;
+}
+
+.quiz-submit {
+	background: green;
+}

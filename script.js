@@ -2,9 +2,9 @@
 
 		this.allQuestions = [
 			        {id: 1, question: 'Who was the first president of the USA?', choices: ['Abraham Lincoln', 'George Washington', 'Thomas Jefferson', 'George Jefferson'], answer: 'George Washington'},
-			        {id: 2, question: 'Who was the sixteenth president of the USA?', choices: ['Abraham Lincoln', 'George Washington', 'Thomas Jefferson', 'George Jefferson'], correctAnswer: 'Abraham Lincoln'},
-			        {id: 3, question: 'Who was the third president of the USA?', choices: ['Abraham Lincoln', 'George Washington', 'Thomas Jefferson', 'George Jefferson'], correctAnswer: 'Thomas Jefferson'},
-			        {id: 4, question: 'Who was the main character of <i>The Jeffersons</i>?', choices: ['Abraham Lincoln', 'George Washington', 'Thomas Jefferson', 'George Jefferson'], correctAnswer: 'George Jefferson'}
+			        {id: 2, question: 'Who was the sixteenth president of the USA?', choices: ['Abraham Lincoln', 'George Washington', 'Thomas Jefferson', 'George Jefferson'], answer: 'Abraham Lincoln'},
+			        {id: 3, question: 'Who was the third president of the USA?', choices: ['Abraham Lincoln', 'George Washington', 'Thomas Jefferson', 'George Jefferson'], answer: 'Thomas Jefferson'},
+			        {id: 4, question: 'Who was the main character of The Jeffersons?', choices: ['Abraham Lincoln', 'George Washington', 'Thomas Jefferson', 'George Jefferson'], answer: 'George Jefferson'}
 			],
 
 			this.settings = {
@@ -56,7 +56,10 @@
 				questionsContainer: $('#quiz'),
 				questionNext: $('#questionNext'),
 				questionPrev: $('#questionPrev'),
-				quizSubmit: $('#quizSubmit')
+				quizSubmit: $('#quizSubmit'),
+				buttons: $('.buttons'),
+				resultsTemplate: $('#results-template').html(),
+				results: $('.results')
 		}
 	};
 
@@ -89,7 +92,7 @@
 
 		//toggles the display of the current question
 		questionToggle: function(){
-			$('#question' + this.settings.questionNumber).toggle();
+			$('#question' + this.settings.questionNumber).fadeToggle();
 		},
 
 		//toggles the previous button's enabled property
@@ -128,6 +131,7 @@
 		//hides current question and displays previous question
 		previousQuestion: function(){
 			this.questionToggle();
+			this.settings.userScore.pop();
 			this.settings.questionNumber--;
 			this.questionToggle();
 		},
@@ -138,6 +142,12 @@
 				alert("You must choose an answer");
 				event.stopImmediatePropagation();
 			} else {
+				if(this.questions[this.settings.questionNumber].getUserAnswer() === this.questions[this.settings.questionNumber].getCorrectAnswer()){
+					this.settings.userScore.push('Correct');
+				} else {
+					this.settings.userScore.push('Incorrect');
+				}
+				console.log(this.questions[this.settings.questionNumber].getUserAnswer() + " " + this.questions[this.settings.questionNumber].getCorrectAnswer());
 				this.changeQuestion(button)
 			}
 		},
@@ -153,12 +163,29 @@
 			if(button.val() === 'Previous Question'){
 				this.previousQuestion();
 			} else if (button.val() === 'Submit Quiz'){
-				//do something
+				this.endQuiz();
 			} else {
 				this.nextQuestion();
 			}
 			this.submitToggle();
 			this.prevToggle()
+		},
+
+		endQuiz: function(){
+			var tempScore = 0;
+			this.questionToggle();
+			this.quizElements.buttons.toggle();
+
+			$.each(this.settings.userScore, function(index, value){
+				if(value === 'Correct'){
+					tempScore +=1;
+				}
+			});
+
+			this.settings.userScore = tempScore;
+			var template = Handlebars.compile(this.quizElements.resultsTemplate);
+			this.quizElements.questionsContainer.append(template(this.settings));
+			this.quizElements.results.fadeIn();
 		},
 
 		bindHandlers: function(){
@@ -171,7 +198,7 @@
 				self.validateAnswer($(this));
 			});
 			this.quizElements.quizSubmit.on('click', function(){
-				self.changeQuestion($(this))
+				self.validateAnswer($(this))
 			});
 
 			$('input:radio').on('change', function(event){
